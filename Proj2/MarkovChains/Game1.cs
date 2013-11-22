@@ -38,6 +38,10 @@ namespace MarkovChains
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             Instance = this;
+
+            Instance.Window.AllowUserResizing = true;
+            GraphicsDevice.PresentationParameters.BackBufferWidth = 1440;
+            GraphicsDevice.PresentationParameters.BackBufferHeight = 900;
         }
 
         /// <summary>
@@ -50,7 +54,6 @@ namespace MarkovChains
         {
             // TODO: Add your initialization logic here
 
-            InputManager.Instance.AddInputState(new Swipe());
             ScreenManager.Instance.PushScreen(new TestScreen());
 
             State state = new State();
@@ -117,9 +120,10 @@ namespace MarkovChains
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            ScreenManager.Instance.Draw(spriteBatch);
+
             spriteBatch.Begin();
             InputManager.Instance.Draw(spriteBatch);
-            ScreenManager.Instance.Draw(spriteBatch);
             spriteBatch.End();
 
 

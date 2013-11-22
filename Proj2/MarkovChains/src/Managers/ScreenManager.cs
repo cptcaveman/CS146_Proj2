@@ -5,10 +5,11 @@ using System.Text;
 using MarkovChains.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MarkovChains.src.Managers;
 
 namespace MarkovChains.Managers
 {
-    public class ScreenManager
+    public class ScreenManager : IManager
     {
         private static ScreenManager _instance;
         private Stack<IScreen> _screenStack;
@@ -33,6 +34,21 @@ namespace MarkovChains.Managers
         private ScreenManager()
         {
             _screenStack = new Stack<IScreen>();
+        }
+
+        public void Initialize()
+        {
+
+        }
+
+        public void LoadContent()
+        {
+
+        }
+
+        public void UnloadContent()
+        {
+
         }
 
         public void Update(GameTime gameTime)

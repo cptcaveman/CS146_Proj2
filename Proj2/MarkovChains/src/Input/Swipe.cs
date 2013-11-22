@@ -23,30 +23,19 @@ namespace MarkovChains.Input
             _mousePositions = new Queue<Vector2>();
         }
 
-        public override void Update(GameTime gameTime)
+        protected override void OnUpdate(GameTime gameTime)
         {
-            _mState = Mouse.GetState();
-
-            _mousePos.X = _mState.X;
-            _mousePos.Y = _mState.Y;
+            base.OnUpdate(gameTime);
 
             _mouseCurrCaptureTime += 1.0f;
 
-            //if (LeftButtonJustPressed || LeftButtonJustReleased)
-            //{
-            //    _mouseCurrCaptureTime = 0;
-            //    _mousePositions.Enqueue(_mousePos);
-            //}
-            //else 
             if (_mouseCurrCaptureTime > _mouseCaptureInterval)
             {
                 if (LeftButtonDown)
                 {
-                    if (_mousePositions.Count > _maxNumberOfPositions / 3)
-                        _mousePositions.Dequeue();
+                    CaptureMousePos();
 
-                    _mouseCurrCaptureTime = 0.0f;
-                    _mousePositions.Enqueue(_mousePos);
+                    CreateSwipeSound();
                 }
                 else if(LeftButtonJustReleased)
                 {
@@ -58,14 +47,33 @@ namespace MarkovChains.Input
                         _mousePositions.Dequeue();
                 }
             }
-
-            _pmState = _mState;
-            _pmousePos = _mousePos;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        private void CaptureMousePos()
         {
-            base.Draw(spriteBatch);
+            if (_mousePositions.Count > _maxNumberOfPositions / 3)
+                _mousePositions.Dequeue();
+
+            _mouseCurrCaptureTime = 0.0f;
+            _mousePositions.Enqueue(_mousePos);
+        }
+
+        private static void CreateSwipeSound()
+        {
+            double random = (new Random()).NextDouble();
+            string name = "bass_f";
+
+            if (0 <= random && random <= .33)
+                name = "bass_g";
+            else if (.33 < random && random <= .66)
+                name = "bass_c";
+
+            MarkovChains.Managers.AudioManager.Instance.PlaySound(name);
+        }
+
+        protected override void OnDraw(SpriteBatch spriteBatch)
+        {
+            base.OnDraw(spriteBatch);
 
             if (_mousePositions.Count > 0)
             {
@@ -77,9 +85,6 @@ namespace MarkovChains.Input
                 for (int i = 1; i < _mousePositions.Count; ++i)
                 {
                     Vector2 currPos = _mousePositions.ElementAt(i);
-
-                    //float weight = 1 / (1 + Math.Abs(i - _mousePositions.Count / 2)) * 3.0f;
-                    //float weight = (i / _mousePositions.Count - 1.0f) * 10.0f;
 
                     Debug.Debug.DrawLine(spriteBatch, prevPos, currPos, Color.Red, weight);
 

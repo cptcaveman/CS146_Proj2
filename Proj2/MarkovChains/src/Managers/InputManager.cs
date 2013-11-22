@@ -6,10 +6,11 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MarkovChains.Input;
+using MarkovChains.src.Managers;
 
 namespace MarkovChains.Managers
 {
-    public class InputManager
+    public class InputManager : IManager
     {
         private static InputManager _instance;
 
@@ -34,6 +35,21 @@ namespace MarkovChains.Managers
         private InputManager()
         {
             _inputStates = new List<InputState>();
+        }
+
+        public void Initialize()
+        {
+
+        }
+
+        public void LoadContent()
+        {
+
+        }
+
+        public void UnloadContent()
+        {
+
         }
 
         public void AddInputState(InputState state)

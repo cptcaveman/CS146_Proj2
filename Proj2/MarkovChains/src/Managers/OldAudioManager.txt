@@ -1,0 +1,285 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
+using MarkovChains.src.Managers;
+using MarkovChains.Audio;
+using OpenTK.Audio;
+using OpenTK.Audio.OpenAL;
+using System.IO;
+
+namespace MarkovChains.Managers
+{
+    unsafe public class AudioManager : IManager
+    {
+        private static AudioManager _instance;
+
+        //OpenAL audio members
+
+        private AudioContext _ac;
+        private XRamExtension _xram;
+
+        public XRamExtension XRam
+        {
+            get { return _xram; }
+        }
+
+        /// <summary>
+        /// Singleton instance of class.
+        /// </summary>
+        public static AudioManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new AudioManager();
+
+                return _instance;
+            }
+        }
+
+        private Dictionary<string, SoundEffect> _sounds;
+        private Queue<string> _soundsToPlay;
+
+        public AudioManager()
+        {
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            _sounds = new Dictionary<string, SoundEffect>();
+            _soundsToPlay = new Queue<string>();
+
+            LoadOpenAL();
+
+            LoadContent();
+        }
+
+
+        int sourceid;
+
+        private void LoadOpenAL()
+        {
+            //_xram = new XRamExtension();
+
+            //byte[] buffer = { 255, 3, 0, 0 };
+
+            //Console.WriteLine(" Number is " + convertToInt(buffer, buffer.Length));
+            int chan, sampleRate, bps, size;
+
+            byte[] data = loadWav("Content\\Audio\\MarkovSamples\\waves\\bass_g", out chan, out sampleRate, out bps, out size);
+
+            //IntPtr device = Alc.OpenDevice(null);
+
+            //if (device == null)
+            //{
+            //    Console.WriteLine("Cannot open sound card");
+            //    return;
+            //}
+
+            //OpenTK.ContextHandle ctx;
+
+            ////try
+            //{
+            //    int* n = null;
+            //    ctx = Alc.CreateContext(device, n);
+            //}
+            ////catch (AudioException)
+            ////{
+            ////    Console.WriteLine("Failed to create audio context.");
+            ////    Environment.Exit(1);
+            ////}
+
+            //if (ctx == null)
+            //{
+            //    Console.WriteLine("Cannot open context");
+            //    return;
+            //}
+
+            //Alc.MakeContextCurrent(ctx);
+
+            int bufferid;
+            ALFormat format;
+
+            AL.GenBuffers(1, out bufferid);
+
+            if (chan == 1)
+            {
+                if (bps == 8)
+                {
+                    format = ALFormat.Mono8;
+                }
+                else
+                {
+                    format = ALFormat.Mono16;
+                }
+            }
+            else
+            {
+                if (bps == 8)
+                {
+                    format = ALFormat.Stereo8;
+                }
+                else
+                {
+                    format = ALFormat.Stereo16;
+                }
+            }
+
+            byte* dataPtr = stackalloc byte[data.Length];
+            Random rand = new Random();
+            for (int i = 0; i < data.Length; ++i)
+            {
+                dataPtr[i] = data[i];
+
+                double test = rand.NextDouble();
+
+                if(test < .5)
+                    dataPtr[i] = (byte)0;
+                else
+                    dataPtr[i] = (byte)1;
+            }
+
+            AL.BufferData(bufferid, format, new IntPtr(dataPtr), size, sampleRate);
+
+
+            AL.GenSources(1, out sourceid);
+
+            AL.Source(sourceid, ALSourcei.Buffer, bufferid);
+
+            
+        }
+
+        public void LoadContent()
+        {
+            //SoundEffect sound1 = Game1.Instance.Content.Load<SoundEffect>(@"Audio\MarkovSamples\waves\bass_g");
+            //_sounds.Add("bass_g", sound1);
+            //SoundEffect sound2 = Game1.Instance.Content.Load<SoundEffect>(@"Audio\MarkovSamples\waves\bass_f");
+            //_sounds.Add("bass_f", sound2);
+            //SoundEffect sound3 = Game1.Instance.Content.Load<SoundEffect>(@"Audio\MarkovSamples\waves\bass_c");
+            //_sounds.Add("bass_c", sound3);
+        }
+
+        public void UnloadContent()
+        {
+            //int buffers = 1;
+            //AL.DeleteBuffers(0, ref buffers);
+            //_ac.Dispose();
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            while (_soundsToPlay.Count > 0)
+            {
+                _sounds[_soundsToPlay.Dequeue()].Play();
+            }
+
+            AL.SourcePlay(sourceid);
+
+            AL.Source(sourceid, ALSource3f.Position, 0, 0, 0);
+            AL.Source(sourceid, ALSourceb.Looping, true);
+
+            float[] f = { 
+                            0,
+                            0,
+                            0 
+                        };
+
+            AL.Listener(ALListenerfv.Orientation, ref f);
+
+            //System.Threading.Thread.Sleep(100);
+        }
+
+        public void PlaySound(string _name)
+        {
+            if (_sounds.ContainsKey(_name))
+                _soundsToPlay.Enqueue(_name);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+
+        }
+
+        public void LoadFromXML(string path)
+        {
+
+        }
+
+        public byte[] loadWav(string file, out int channels, out int sampleRate, out int bps, out int size)
+        {
+            FileStream fileStream = new FileStream(file + ".wav", System.IO.FileMode.Open, System.IO.FileAccess.Read);
+            
+            byte[] buffer = new byte[4];
+            fileStream.Read(buffer, 0, buffer.Length);
+
+            channels = size = bps = sampleRate = 0;
+
+            string bufferStr = "";
+
+            foreach(byte b in buffer)
+            {
+                char c = (char)b;
+                bufferStr += c;
+            }
+
+            if (string.Compare(bufferStr, 0, "RIFF", 0, buffer.Length) != 0)
+            {
+                Console.WriteLine("Not a valid .WAV file.");
+                return null;
+            }
+
+            fileStream.Read(buffer, 0, 4);
+            fileStream.Read(buffer, 0, 4); //WAVE
+            fileStream.Read(buffer, 0, 4); //format
+            fileStream.Read(buffer, 0, 4); //16
+            fileStream.Read(buffer, 0, 2); //1
+            fileStream.Read(buffer, 0, 2);
+            channels = convertToInt(buffer, 2);
+            fileStream.Read(buffer, 0, 4);
+            sampleRate = convertToInt(buffer, 4);
+            fileStream.Read(buffer, 0, 4);
+            fileStream.Read(buffer, 0, 2);
+            fileStream.Read(buffer, 0, 2);
+            bps = convertToInt(buffer, 2);
+            fileStream.Read(buffer, 0, 4); //data
+            fileStream.Read(buffer, 0, 4); //size
+            size = convertToInt(buffer, 4);
+            byte[] data = new byte[size];
+            fileStream.Read(data, 0, size);
+
+            return data;
+        }
+
+        private bool isBigEndian()
+        {
+            return !BitConverter.IsLittleEndian;
+        }
+
+        private int convertToInt(byte[] buffer, int length)
+        {
+            int a = 0;
+
+            if (!isBigEndian())
+            {
+                for (int i = 0; i < length; ++i)
+                {
+                    ((byte*)&a)[i] = buffer[i];
+                }
+            }
+            else
+            {
+                for (int i = 0; i < length; ++i)
+                {
+                    ((byte*)&a)[3 - i] = buffer[i];
+                }
+            }
+
+            return a;
+        }
+    }
+}

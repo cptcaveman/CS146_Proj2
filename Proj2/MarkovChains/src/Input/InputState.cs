@@ -75,6 +75,7 @@ namespace MarkovChains.Input
         private KeyboardState _kState;
         private KeyboardState _pkState;
         private Keys[] _keysPressed;
+        private Keys[] _pkeysPressed;
 
         public Keys[] KeysPressed
         {
@@ -83,31 +84,59 @@ namespace MarkovChains.Input
 
         #endregion
 
-        public virtual void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
-            UpdateMouse();
+            PreUpdate(gameTime);
 
-            UpdateKeyboard();
+            OnUpdate(gameTime);
+
+            PostUpdate(gameTime);
         }
 
-        private void UpdateMouse()
+        protected virtual void PreUpdate(GameTime gameTime)
         {
-            _pmState = _mState;
-
+            //udpate the current mouse state
             _mState = Mouse.GetState();
-
             _mousePos.X = _mState.X;
             _mousePos.Y = _mState.Y;
-        }
 
-        private void UpdateKeyboard()
-        {
-            _pkState = _kState;
+            //update the current keyboard state
             _kState = Keyboard.GetState();
             _keysPressed = _kState.GetPressedKeys();
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        protected virtual void OnUpdate(GameTime gameTime)
+        {
+
+        }
+
+        protected virtual void PostUpdate(GameTime gameTime)
+        {
+            //save the previous mouse state
+            _pmState = _mState;
+            _pmousePos = _mousePos;
+
+            //save the previous keyboard state
+            _pkState = _kState;
+            _pkeysPressed = _keysPressed;
+        }
+
+        protected virtual void UpdateMouse()
+        {
+
+        }
+
+        protected virtual void UpdateKeyboard()
+        {
+
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            OnDraw(spriteBatch);
+        }
+
+        protected virtual void OnDraw(SpriteBatch spritebatch)
         {
 
         }
