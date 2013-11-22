@@ -2,25 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MarkovChains.FSM;
+using MarkovChains.src.Actions;
+using MarkovChains.src.Conditions;
+using Microsoft.Xna.Framework;
 
-namespace MarkovChains.src.FSM
+namespace MarkovChains.FSM
 {
     class Transition : ITransition
     {
         //private class variables
 	    private IState myTargetState;
-	    private Actions.IAction myAction;
-	    private Conditions.ICondition myCondition;
+	    private IAction myAction;
+	    private ICondition myCondition;
 
 	    public IState getTargetState() {
 		    return myTargetState;
 	    }
 
-	    public Actions.IAction getAction() {
+	    public IAction getAction() {
 		    return myAction;
 	    }
 
-	    public void setCondition(Conditions.ICondition condition) {
+	    public void setCondition(ICondition condition) {
 		    myCondition = condition;
 	    }
 
@@ -28,7 +32,7 @@ namespace MarkovChains.src.FSM
 		    myTargetState = targetState;
 	    }
 
-	    public void setAction(Actions.IAction action) {
+	    public void setAction(IAction action) {
 		    myAction = action;
 	    }
 

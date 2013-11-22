@@ -2,58 +2,76 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MarkovChains.FSM;
+using MarkovChains.src.Actions;
+using MarkovChains.src.Conditions;
 
-namespace MarkovChains.src.FSM
+namespace MarkovChains.FSM
 {
+    /** 
+     * The State interface which will represent the
+     * game states that are possible (Combat, Exploration, etc.)
+     * Each of these states will have their own transition matrix
+     * and state vector (represented as a 2D array and dictionary,
+     * respectively.
+     */
+
     public interface IState
     {
         /**
-	     * Determines the action appropriate for being in this state. 
-	     * @return Action for being in this state.
-	     */
-        Actions.IAction getAction();
+         * Member function that initializes the transition
+         * matrix for the current state. Each state will
+         * have it's own transition matrix. The matrix is
+         * represented as a 2D array of ints.
+         */
+        void initializeTransMatrix();
 
         /**
-         * sets the action returned while in the state.
-         * @param action action to set
+         * Member function that returns the transition
+         * matrix for the current state.
+         * @return a 2D array of ints that represents the
+         *          transition matrix.
          */
-        void setAction(Actions.IAction action);
+        int[,] getTransMatrix();
 
         /**
-         * Generates the action for entering this state.
-         * @return The action associated with entering this state.
+         * Member function that initializes the array of 
+         * strings which represents the vector of notes
+         * possible to play.
          */
-        Actions.IAction getEntryAction();
+        void initializeStateVector();
 
         /**
-         * Sets the action for entering the state.
-         * @param action Entrance action.
+         * Member function that returns the state vector
+         * of notes.
+         * @return an array of strings that represents the
+         *          state vector
          */
-        void setEntryAction(Actions.IAction action);
+        string[] getStateVector();
 
         /**
-         * Retrieves the action for exiting this state.
-         * @return The action associated with exiting this state.
+         * Member function that finds the next note in the
+         * state vector to play. This performs the Markov
+         * chaining needed for the AI.
+         * @param a string variable that represents the
+         *          current note being played.
+         * @return a string variable that represents the
+         *          next note to play.
          */
-        Actions.IAction getExitAction();
+        string findNextNote(string currentNote, Random rand);
 
         /**
-         * Sets the action for exiting the state.
-         * @param action Exit action.
+         * Member function that returns the list of transitions
+         * that go from this state to another state.
+         * @return a list of transitions.
          */
-        void setExitAction(Actions.IAction action);
-
-
-        /**
-         * Accessor for all transitions out of this state.
-         * @return The outbound transitions from this state.
-         */
-        List<ITransition> getTransitions();
+        LinkedList<ITransition> getTransitions();
 
         /**
-         * Sets the transition collection for this state.
-         * @param trans the transitions
+         * Member function that sets the list of transitions
+         * for this state.
+         * @param a list of transitions.
          */
-        void setTransitions(List<ITransition> trans);
+        void setTransitions(LinkedList<ITransition> transitions);
     }
 }

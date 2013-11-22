@@ -2,46 +2,46 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
+using MarkovChains.FSM;
+using MarkovChains.src.Actions;
+using MarkovChains.src.Conditions;
 
 
-namespace MarkovChains.src.FSM
+namespace MarkovChains.FSM
 {
+    /**
+     * The StateMachine interface that applies transitions
+     * between states and keeps track of the entire state
+     * of the state machine
+     */
+
     public interface IStateMachine
     {
         /**
-         * The member function that performs the update on the FSM:
-	     * - Test transitions for current state and moves to new state.
-	     * - Returns a list of IActions that result from the current
-	     *   state and any transitions, entrances and exits that may occur.
-	     * returns A list of actions produced by evaluating the FSM.
-	     */
-
-        List<Actions.IAction> update(Game1 game);
-
-        /**
-         * Retrieves the current state of the finite state machine.
-         * returns the current state of the finite state machine
+         * Member function that sets the current
+         * state.
+         * @param A state.
          */
-
-        IState getCurrentState();
-
-        /**
-         * Sets the current state of the finite state machine.
-         */
-
         void setCurrentState(IState state);
 
         /**
-         * Retrieves the previous state of the finite state machine.
-         * returns the previous state of the finite state machine.
+         * Member function that gets the current
+         * state.
+         * @return The current state.
          */
-
-        IState getPreviousState();
+        IState getCurrentState();
 
         /**
-         * Sets the previous state of the finite state machien.
+         * Member function that updates the
+         * state machine. The update applies the markov
+         * chaining for current state as long as the
+         * state remains active. If a transition occurs, the
+         * state machine will switch states, which will
+         * create a new markov process.
+         * @param a string that contains the currentNote and
+         *          a Random variable.
          */
-
-        void setPreviousState(IState state);
+        string update(string currentNote, Random rand);
     }
 }

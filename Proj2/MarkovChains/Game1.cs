@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using MarkovChains.Managers;
 using MarkovChains.Input;
 using MarkovChains.Screens;
+using MarkovChains.FSM;
 #endregion
 
 namespace MarkovChains
@@ -21,6 +22,9 @@ namespace MarkovChains
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        //Global StateMachine
+        StateMachine SM = new StateMachine();
 
         public static Game1 Instance
         {
@@ -48,6 +52,18 @@ namespace MarkovChains
 
             InputManager.Instance.AddInputState(new Swipe());
             ScreenManager.Instance.PushScreen(new TestScreen());
+
+            State state = new State();
+            SM.setCurrentState(state);
+            SM.getCurrentState().initializeStateVector();
+            SM.getCurrentState().initializeTransMatrix();
+            string currentNote = "B";
+            Random rand = new Random();
+            for (int i = 0; i < 50; i++)
+            {
+                Console.WriteLine("Current Note: " + currentNote);
+                currentNote = SM.update(currentNote, rand);
+            }
 
             base.Initialize();
         }
@@ -105,6 +121,7 @@ namespace MarkovChains
             InputManager.Instance.Draw(spriteBatch);
             ScreenManager.Instance.Draw(spriteBatch);
             spriteBatch.End();
+
 
             base.Draw(gameTime);
         }

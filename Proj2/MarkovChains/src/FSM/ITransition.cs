@@ -2,9 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MarkovChains.FSM;
+using MarkovChains.src.Actions;
+using MarkovChains.src.Conditions;
+using Microsoft.Xna.Framework;
 
-namespace MarkovChains.src.FSM
+namespace MarkovChains.FSM
 {
+    /**
+     * The Transition interface that allows us to change
+     * States (notes).
+     */
+
     public interface ITransition
     {
         /**
@@ -23,19 +32,19 @@ namespace MarkovChains.src.FSM
          * Generates the action associated with taking this transition.
          * @return The action associated with taking this transition.
          */
-        Actions.IAction getAction();
+        IAction getAction();
 
         /**
          * Sets the action for enacting the transition.
          * @param action Transition action.
          */
-        void setAction(Actions.IAction action);
+        void setAction(IAction action);
 
         /**
          * Sets the condition that determines if the transition is triggered.
          * @param condition A testable condition.
          */
-        void setCondition(Conditions.ICondition condition);
+        void setCondition(ICondition condition);
 
         /**
          * Determines if this transition is triggered.

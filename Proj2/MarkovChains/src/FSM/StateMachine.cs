@@ -2,69 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
+using MarkovChains.FSM;
+using MarkovChains.src.Actions;
+using MarkovChains.src.Conditions;
 
-namespace MarkovChains.src.FSM
+namespace MarkovChains.FSM
 {
     class StateMachine : IStateMachine
     {
         //private class variables
-        private List<Actions.IAction> actions;
-        private IState prevState, currState;
+        private IState _currentState;
 
-        public StateMachine()
+        public void setCurrentState(IState state)
         {
-        }
-
-        public List<Actions.IAction> update(Game1 game)
-        {
-            Boolean triggered = false;
-            foreach (ITransition trans in currState.getTransitions())
-            {
-                if (trans.isTriggered(game))
-                {
-                    triggered = true;
-                    if (currState.getExitAction() != null)
-                    {
-                        actions.Add(currState.getExitAction());
-                    }
-                    if (currState.getAction() != null)
-                    {
-                        actions.Add(currState.getAction());
-                    }
-                    currState = trans.getTargetState();
-                    if (currState.getEntryAction() != null)
-                    {
-                        actions.Add(currState.getEntryAction());
-                    }
-                    break;
-                }
-            }
-            if (!triggered)
-            {
-                actions.Add(currState.getAction());
-            }
-
-            return actions;
+            _currentState = state;
         }
 
         public IState getCurrentState()
         {
-            return currState;
+            return _currentState;
         }
 
-        public void setCurrentState(IState state)
+        public string update(string currentNote, Random rand)
         {
-            currState = state;
-        }
-
-        public IState getPreviousState()
-        {
-            return prevState;
-        }
-
-        public void setPreviousState(IState state)
-        {
-            prevState = state;
+            return _currentState.findNextNote(currentNote, rand);
         }
     }
 }
