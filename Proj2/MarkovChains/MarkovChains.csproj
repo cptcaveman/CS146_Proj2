@@ -40,6 +40,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Actions\IAction.cs" />
+    <Compile Include="src\Audio\MarkovMatrix.cs" />
     <Compile Include="src\Audio\Sound3D.cs" />
     <Compile Include="src\Audio\WaveData.cs" />
     <Compile Include="src\Camera\Camera2D.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="src\FSM\ITransition.cs" />
     <Compile Include="src\FSM\State.cs" />
     <Compile Include="src\FSM\StateMachine.cs" />
+    <Compile Include="src\FSM\StateMachineTest.cs" />
     <Compile Include="src\FSM\Transition.cs" />
     <Compile Include="src\Input\InputState.cs" />
     <Compile Include="src\Input\Swipe.cs" />
@@ -111,6 +113,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\enemy_idle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\MarkovSamples\testsample.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="src\Managers\OldAudioManager.txt" />

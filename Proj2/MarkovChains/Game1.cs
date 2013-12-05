@@ -24,7 +24,7 @@ namespace MarkovChains
         SpriteBatch spriteBatch;
 
         //Global StateMachine
-        StateMachine SM = new StateMachine();
+        StateMachineTest SMT = new StateMachineTest();
 
         public static Game1 Instance
         {
@@ -53,20 +53,8 @@ namespace MarkovChains
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            SMT.update();
             ScreenManager.Instance.PushScreen(new TestScreen());
-
-            State state = new State();
-            SM.setCurrentState(state);
-            SM.getCurrentState().initializeStateVector();
-            SM.getCurrentState().initializeTransMatrix();
-            string currentNote = "B";
-            Random rand = new Random();
-            for (int i = 0; i < 50; i++)
-            {
-                Console.WriteLine("Current Note: " + currentNote);
-                currentNote = SM.update(currentNote, rand);
-            }
 
             base.Initialize();
         }

@@ -1,8 +1,4 @@
-﻿/**
- * https://github.com/mono/opentk/blob/master/Source/Examples/OpenAL/1.1/Playback.cs
- */
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +11,7 @@ using OpenTK.Audio;
 using OpenTK.Audio.OpenAL;
 using System.IO;
 using System.Threading;
+using Tao.Sdl;
 
 namespace MarkovChains.Managers
 {
@@ -59,7 +56,7 @@ namespace MarkovChains.Managers
             _sounds = new Dictionary<string, SoundEffect>();
             _soundsToPlay = new Queue<string>();
 
-            LoadOpenAL();
+            //LoadOpenAL();
 
             LoadContent();
         }
@@ -71,40 +68,41 @@ namespace MarkovChains.Managers
 
         private void LoadOpenAL()
         {
-            //_actx = new AudioContext();
+            _actx = new AudioContext();
 
-            //bufferid = AL.GenBuffer();
-            //sourceid = AL.GenSource();
+            bufferid = AL.GenBuffer();
+            sourceid = AL.GenSource();
 
 
-            //int channels, bps, sampleRate;
+            int channels, bps, sampleRate;
 
-            //byte[] data = loadWav("Content\\Audio\\MarkovSamples\\waves\\FancyPants", out channels, out sampleRate, out bps);
+            byte[] data = loadWav("Content\\Audio\\MarkovSamples\\waves\\FancyPants", out channels, out sampleRate, out bps);
 
-            //AL.BufferData(bufferid, GetSoundFormat(channels, bps), data, data.Length, sampleRate);
+            AL.BufferData(bufferid, GetSoundFormat(channels, bps), data, data.Length, sampleRate);
+            
+            Console.WriteLine("Playing");
 
-            //Console.WriteLine("Playing");
+            Thread t = new Thread(() =>
+            {
+                do
+                {
 
-            //Thread t = new Thread(() =>
-            //{
-            //    do
-            //    {
+                    AL.Source(sourceid, ALSourcei.Buffer, bufferid);
+                    AL.SourcePlay(sourceid);
 
-            //        AL.Source(sourceid, ALSourcei.Buffer, bufferid);
-            //        AL.SourcePlay(sourceid);
+                    Thread.Sleep(5000);
 
-            //        Thread.Sleep(5000);
+                    Console.Write(".");
+                    AL.GetSource(sourceid, ALGetSourcei.SourceState, out state);
+                } while ((ALSourceState)state == ALSourceState.Playing);
 
-            //        Console.Write(".");
-            //        AL.GetSource(sourceid, ALGetSourcei.SourceState, out state);
-            //    } while ((ALSourceState)state == ALSourceState.Playing);
+                AL.SourceStop(sourceid);
+                AL.DeleteSource(sourceid);
+                AL.DeleteBuffer(bufferid);
+            });
 
-            //    AL.SourceStop(sourceid);
-            //    AL.DeleteSource(sourceid);
-            //    AL.DeleteBuffer(bufferid);
-            //});
-
-            //t.Start();
+            t.Start();
+            
         }
 
         public void LoadContent()
@@ -115,6 +113,8 @@ namespace MarkovChains.Managers
             _sounds.Add("bass_f", sound2);
             SoundEffect sound3 = Game1.Instance.Content.Load<SoundEffect>(@"Audio\MarkovSamples\waves\bass_c");
             _sounds.Add("bass_c", sound3);
+
+            SampleAudioFile("Content\\Audio\\MarkovSamples\\testsample.txt", 2);
         }
 
         public void UnloadContent()
@@ -130,18 +130,6 @@ namespace MarkovChains.Managers
             {
                 _sounds[_soundsToPlay.Dequeue()].Play();
             }
-
-            //if (count == 0)
-            //{
-            //    count++;
-            //    AL.Source(sourceid, ALSourcei.Buffer, bufferid);
-            //    AL.SourcePlay(sourceid);
-            //}
-
-            ////Thread.Sleep(1000);
-
-            //Console.Write(".");
-            //AL.GetSource(sourceid, ALGetSourcei.SourceState, out state);
         }
 
         public void PlaySound(string _name)
@@ -158,6 +146,60 @@ namespace MarkovChains.Managers
         public void LoadFromXML(string path)
         {
 
+        }
+
+        public MarkovMatrix<string, char> SampleAudioFile(string path, int markovOrder)
+        {
+            List<string> noteChains = new List<string>();
+            List<char> notes = new List<char>();
+
+            Stream stream = File.Open(path, FileMode.Open);
+
+            if (stream == null)
+                throw new FileNotFoundException();
+
+            char[] buffer = new char[markovOrder + 1];
+            
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                int numToRead = buffer.Length - 1;
+                //this reads in the "prev" notes of the chain
+                reader.Read(buffer, 0, numToRead);
+                string chain = null;
+
+                while (!reader.EndOfStream)
+                {
+                    reader.Read(buffer, buffer.Length - 1, 1);
+
+                    //get the note chain
+                    chain = new string(buffer, 0, buffer.Length - 1);
+
+                    //check to see if it is contained in our note chain list
+                    if (!noteChains.Contains(chain))
+                        noteChains.Add(chain);
+
+                    //set previous notes. essentially shift the characters in the buffer by 1
+                    for (int i = 1; i < buffer.Length; ++i)
+                    {
+                        if(!notes.Contains(buffer[i - 1]))
+                            notes.Add(buffer[i - 1]);
+
+                        buffer[i - 1] = buffer[i];
+                    }
+
+                    if (!notes.Contains(buffer[buffer.Length - 1]))
+                        notes.Add(buffer[buffer.Length - 1]);
+                }
+
+                //grab the last chain and check to see if it is in the list
+                chain = new string(buffer, 0, markovOrder);
+                if (!noteChains.Contains(chain))
+                    noteChains.Add(chain);
+
+            }
+
+            //create the markov matrix
+            return new MarkovMatrix<string, char>(noteChains, notes, path, markovOrder);
         }
 
         public byte[] loadWav(string file, out int channels, out int sampleRate, out int bps/*, out int size*/)
@@ -207,7 +249,7 @@ namespace MarkovChains.Managers
                     //    throw new NotSupportedException("Specified wave file is not supported.");
 
                 }
-                data_chunk_size = reader.ReadInt32();
+                data_chunk_size = reader.ReadInt32() + 10000;
 
                 channels = num_channels;
                 bps = bits_per_sample;

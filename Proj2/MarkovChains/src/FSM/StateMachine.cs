@@ -24,9 +24,9 @@ namespace MarkovChains.FSM
             return _currentState;
         }
 
-        public string update(string currentNote, Random rand)
+        public char update(string currentNote)
         {
-            return _currentState.findNextNote(currentNote, rand);
+            return _currentState.findNextNote(currentNote);
         }
     }
 }

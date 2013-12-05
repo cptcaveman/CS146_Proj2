@@ -19,46 +19,16 @@ namespace MarkovChains.FSM
     public interface IState
     {
         /**
-         * Member function that initializes the transition
-         * matrix for the current state. Each state will
-         * have it's own transition matrix. The matrix is
-         * represented as a 2D array of ints.
-         */
-        void initializeTransMatrix();
-
-        /**
-         * Member function that returns the transition
-         * matrix for the current state.
-         * @return a 2D array of ints that represents the
-         *          transition matrix.
-         */
-        int[,] getTransMatrix();
-
-        /**
-         * Member function that initializes the array of 
-         * strings which represents the vector of notes
-         * possible to play.
-         */
-        void initializeStateVector();
-
-        /**
-         * Member function that returns the state vector
-         * of notes.
-         * @return an array of strings that represents the
-         *          state vector
-         */
-        string[] getStateVector();
-
-        /**
          * Member function that finds the next note in the
          * state vector to play. This performs the Markov
          * chaining needed for the AI.
          * @param a string variable that represents the
-         *          current note being played.
-         * @return a string variable that represents the
+         *          current chain, which consists of the
+         *          previous and current note
+         * @return a char variable that represents the
          *          next note to play.
          */
-        string findNextNote(string currentNote, Random rand);
+        char findNextNote(string currentChain);
 
         /**
          * Member function that returns the list of transitions
@@ -73,5 +43,34 @@ namespace MarkovChains.FSM
          * @param a list of transitions.
          */
         void setTransitions(LinkedList<ITransition> transitions);
+
+        /**
+         * Member function that sets the name of the current
+         * state.
+         * @param a string for the name of the state
+         */
+        void setStateName(string currentStateName);
+
+        /**
+         * Member function that returns the name of the
+         * current state.
+         * @return a string for the name of the current state
+         */
+        string getStateName();
+
+        /**
+         * Member function that sets the initial note for 
+         * a specific state.
+         * @param a string that sets the initial note for states
+         */
+        void setInitialNote(string initNote);
+
+        /**
+         * Member function that returns the initial note for
+         * a specific state.
+         * @return a string that represents the first note to be
+         * played when this state becomes active
+         */
+        string getInitialNote();
     }
 }
