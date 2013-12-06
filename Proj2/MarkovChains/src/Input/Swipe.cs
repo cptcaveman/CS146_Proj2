@@ -61,12 +61,14 @@ namespace MarkovChains.Input
         private static void CreateSwipeSound()
         {
             double random = (new Random()).NextDouble();
-            string name = "bass_f";
+            string name = "A";
 
-            if (0 <= random && random <= .33)
-                name = "bass_g";
-            else if (.33 < random && random <= .66)
-                name = "bass_c";
+            if (0 <= random && random <= .25)
+                name = "D";
+            else if (.33 < random && random <= .5)
+                name = "G";
+            else if (.5 < random && random <= .75)
+                name = "Bb";
 
             MarkovChains.Managers.AudioManager.Instance.PlaySound(name);
         }

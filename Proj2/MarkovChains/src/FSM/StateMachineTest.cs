@@ -23,7 +23,7 @@ namespace MarkovChains.FSM
             State exploration = new State();
             SM.setCurrentState(exploration);
             SM.getCurrentState().setStateName("exploration");
-            SM.getCurrentState().setInitialNote("aa");
+            SM.getCurrentState().setInitialNote("AA");
             string currentChain = SM.getCurrentState().getInitialNote();
             char currentNote;
             Console.WriteLine("current state: " + SM.getCurrentState().getStateName());

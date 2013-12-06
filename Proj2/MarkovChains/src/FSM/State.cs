@@ -22,8 +22,9 @@ namespace MarkovChains.FSM
         //Constructor
         public State()
         {
-            _rand = new Random();
-            _markovMatrix = AudioManager.Instance.SampleAudioFile("Content\\Audio\\MarkovSamples\\testsample.txt", 2);
+            _rand = new Random(1337);
+            //run sickshitsample.txt with timestep = to .15f and 2nd or 3rd or 6th order markov
+            _markovMatrix = AudioManager.Instance.SampleAudioTab("Content\\Audio\\MarkovSamples\\sickshitsample.txt", 2);
         }
 
         //This is our action to perform
@@ -35,13 +36,15 @@ namespace MarkovChains.FSM
             int nextNote = 0;           //index of nextNote to play
             float totalProbability = 0; //probability of nextNote from currentChain
 
-            for (int i = 0; i < _markovMatrix.getKeys().Count; i++)
-            {
-                if (_markovMatrix.getKeys().ElementAt(i) == currentChain)
-                {
-                    currentState = i;
-                }
-            }
+            //for (int i = 0; i < _markovMatrix.getKeys().Count; i++)
+            //{
+            //    if (_markovMatrix.getKeys().ElementAt(i) == currentChain)
+            //    {
+            //        currentState = i;
+            //    }
+            //}
+
+            currentState = _markovMatrix.getKeys().IndexOf(currentChain);
 
             for (int i = 0; i < _markovMatrix.getValues().Count; i++)
             {
@@ -56,6 +59,8 @@ namespace MarkovChains.FSM
                 tempSum += _markovMatrix.getProbValue(currentChain, _markovMatrix.getValues().ElementAt(nextNote));
                 nextNote++;
             }
+
+            nextNote = nextNote >= _markovMatrix.getValues().Count ? _markovMatrix.getValues().Count - 1 : nextNote;
 
             char noteToPlay = _markovMatrix.getValues().ElementAt(nextNote);
             return noteToPlay;

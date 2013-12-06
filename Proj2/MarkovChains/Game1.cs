@@ -53,7 +53,7 @@ namespace MarkovChains
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            SMT.update();
+            //SMT.update();
             ScreenManager.Instance.PushScreen(new TestScreen());
 
             base.Initialize();
@@ -67,7 +67,7 @@ namespace MarkovChains
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            AudioManager.Instance.LoadContent();
             // TODO: use this.Content to load your game content here
         }
 

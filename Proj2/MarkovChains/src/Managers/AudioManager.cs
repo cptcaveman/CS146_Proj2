@@ -12,6 +12,7 @@ using OpenTK.Audio.OpenAL;
 using System.IO;
 using System.Threading;
 using Tao.Sdl;
+using MarkovChains.FSM;
 
 namespace MarkovChains.Managers
 {
@@ -57,8 +58,6 @@ namespace MarkovChains.Managers
             _soundsToPlay = new Queue<string>();
 
             //LoadOpenAL();
-
-            LoadContent();
         }
 
 
@@ -105,17 +104,41 @@ namespace MarkovChains.Managers
             
         }
 
+        StateMachine SM;
+        string currentChain;
+
         public void LoadContent()
         {
-            SoundEffect sound1 = Game1.Instance.Content.Load<SoundEffect>(@"Audio\MarkovSamples\waves\bass_g");
-            _sounds.Add("bass_g", sound1);
-            SoundEffect sound2 = Game1.Instance.Content.Load<SoundEffect>(@"Audio\MarkovSamples\waves\bass_f");
-            _sounds.Add("bass_f", sound2);
-            SoundEffect sound3 = Game1.Instance.Content.Load<SoundEffect>(@"Audio\MarkovSamples\waves\bass_c");
-            _sounds.Add("bass_c", sound3);
+            _sounds.Add("A", Game1.Instance.Content.Load<SoundEffect>(@"Audio\A"));
+            _sounds.Add("B", Game1.Instance.Content.Load<SoundEffect>(@"Audio\B"));
+            _sounds.Add("Bb", Game1.Instance.Content.Load<SoundEffect>(@"Audio\Bb"));
+            _sounds.Add("C", Game1.Instance.Content.Load<SoundEffect>(@"Audio\C"));
+            _sounds.Add("C#", Game1.Instance.Content.Load<SoundEffect>(@"Audio\C#"));
+            _sounds.Add("D", Game1.Instance.Content.Load<SoundEffect>(@"Audio\D"));
+            _sounds.Add("E", Game1.Instance.Content.Load<SoundEffect>(@"Audio\E"));
+            _sounds.Add("Eb", Game1.Instance.Content.Load<SoundEffect>(@"Audio\Eb"));
+            _sounds.Add("F", Game1.Instance.Content.Load<SoundEffect>(@"Audio\F"));
+            _sounds.Add("F#", Game1.Instance.Content.Load<SoundEffect>(@"Audio\F#"));
+            _sounds.Add("G", Game1.Instance.Content.Load<SoundEffect>(@"Audio\G"));
+            _sounds.Add("G#", Game1.Instance.Content.Load<SoundEffect>(@"Audio\G#"));
 
-            SampleAudioFile("Content\\Audio\\MarkovSamples\\testsample.txt", 2);
+            //_sounds.Add("hat8", Game1.Instance.Content.Load<SoundEffect>(@"Audio\hat8"));
+            //_sounds.Add("kick14", Game1.Instance.Content.Load<SoundEffect>(@"Audio\kick14"));
+            //_sounds.Add("openhat8", Game1.Instance.Content.Load<SoundEffect>(@"Audio\openhat8"));
+            //_sounds.Add("shaker5", Game1.Instance.Content.Load<SoundEffect>(@"Audio\shaker5"));
+            //_sounds.Add("snare13", Game1.Instance.Content.Load<SoundEffect>(@"Audio\snare13"));
+            //_sounds.Add("snare14", Game1.Instance.Content.Load<SoundEffect>(@"Audio\snare14"));
+
+            SM = new StateMachine();
+            State exploration = new State();
+            SM.setCurrentState(exploration);
+            SM.getCurrentState().setStateName("exploration");
+            SM.getCurrentState().setInitialNote("AE");
+            currentChain = SM.getCurrentState().getInitialNote();
+            PlaySound("A");
+            PlaySound("A");
         }
+
 
         public void UnloadContent()
         {
@@ -124,11 +147,24 @@ namespace MarkovChains.Managers
             //_ac.Dispose();
         }
         int count = 0;
+        float time = 0.0f;
         public void Update(GameTime gameTime)
         {
-            while (_soundsToPlay.Count > 0)
+            time += gameTime.ElapsedGameTime.Milliseconds / 1000f;
+
+            if(time > .15f)
+            //while (_soundsToPlay.Count > 0)
             {
-                _sounds[_soundsToPlay.Dequeue()].Play();
+                time = 0.0f;
+                (_sounds[_soundsToPlay.Dequeue()].CreateInstance()).Play();
+            }
+
+            if (_soundsToPlay.Count < 10)
+            {
+                char currentNote = SM.update(currentChain);
+                currentChain += currentNote;
+                currentChain = currentChain.Substring(1);
+                PlaySound(currentNote.ToString().ToUpper());
             }
         }
 
@@ -148,7 +184,7 @@ namespace MarkovChains.Managers
 
         }
 
-        public MarkovMatrix<string, char> SampleAudioFile(string path, int markovOrder)
+        public MarkovMatrix<string, char> SampleAudioTab(string path, int markovOrder)
         {
             List<string> noteChains = new List<string>();
             List<char> notes = new List<char>();
