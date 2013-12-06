@@ -21,7 +21,7 @@ namespace MarkovChains.Screens
         Level _level;
 
         int numEnemies = 20;
-        List<Enemy> _enemyList = new List<Enemy>();
+        public static List<Enemy> _enemyList = new List<Enemy>();
 
         /// <summary>
         /// Constructor.

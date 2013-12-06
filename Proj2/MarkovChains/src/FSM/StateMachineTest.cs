@@ -20,7 +20,7 @@ namespace MarkovChains.FSM
         public void update()
         {
             StateMachine SM = new StateMachine();
-            State exploration = new State();
+            State exploration = new State("exploration");
             SM.setCurrentState(exploration);
             SM.getCurrentState().setStateName("exploration");
             SM.getCurrentState().setInitialNote("AA");

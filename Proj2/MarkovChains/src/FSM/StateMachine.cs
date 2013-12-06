@@ -26,14 +26,16 @@ namespace MarkovChains.FSM
 
         public string update(string currentNote)
         {
+            string chain = currentNote;
             Transition trans = (Transition)_currentState.getTransitions();
             if(trans.isTriggered()){
                 {
                     setCurrentState(trans.getTargetState());
+                    chain = _currentState.getInitialNote();
                 }
             }
             Console.WriteLine("current state: " + _currentState.getStateName());
-            return _currentState.findNextNote(currentNote);
+            return _currentState.findNextNote(chain);
         }
     }
 }

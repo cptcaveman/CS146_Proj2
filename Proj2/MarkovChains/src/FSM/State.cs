@@ -22,11 +22,22 @@ namespace MarkovChains.FSM
         private string _initNote;  //the initial note to be played when new state becomes active
 
         //Constructor
-        public State()
+        public State(string stateName)
         {
             _rand = new Random(1337);
             //run sickshitsample.txt with timestep = to .15f and 2nd or 3rd or 6th order markov
-            _markovMatrix = AudioManager.Instance.SampleAudioTab("Content\\Audio\\MarkovSamples\\sickshitsample.txt", 2);
+            if (stateName == "exploration")
+            {
+                _markovMatrix = AudioManager.Instance.SampleAudioTab("Content\\Audio\\MarkovSamples\\sickshitsample.txt", 2);
+                _stateName = "exploration";
+                _initNote = "BA";
+            }
+            else if (stateName == "combat")
+            {
+                _markovMatrix = AudioManager.Instance.SampleAudioTab("Content\\Audio\\MarkovSamples\\sickershitsample.txt", 2);
+                _stateName = "combat";
+                _initNote = "DA";
+            }
             _hatMatrix = AudioManager.Instance.SampleAudioTab("Content\\Audio\\MarkovSamples\\hatsample.txt", 2);
         }
 

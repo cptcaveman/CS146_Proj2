@@ -106,7 +106,7 @@ namespace MarkovChains.Managers
         }
 
         StateMachine SM;
-        string currentChain;
+        public string currentChain;
 
         public void LoadContent()
         {
@@ -131,14 +131,14 @@ namespace MarkovChains.Managers
             //_sounds.Add("snare14", Game1.Instance.Content.Load<SoundEffect>(@"Audio\snare14"));
 
             SM = new StateMachine();
-            State exploration = new State();
+            State exploration = new State("exploration");
             SM.setCurrentState(exploration);
-            SM.getCurrentState().setStateName("exploration");
             SM.getCurrentState().setInitialNote("AE");
             currentChain = SM.getCurrentState().getInitialNote();
             PlaySound("A");
             PlaySound("A");
-            State combat = new State();
+            State combat = new State("combat");
+            combat.setInitialNote("EC");
             Transition eToC = new Transition();
             Transition cToE = new Transition();
 

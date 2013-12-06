@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using MarkovChains.src.Enemies;
 using MarkovChains.src.Player;
+using MarkovChains.Screens;
 
 namespace MarkovChains.src.Conditions
 {
@@ -11,10 +12,12 @@ namespace MarkovChains.src.Conditions
     {
         public Boolean test()
         {
-
-            if (Enemy._transFlag == false)
+            foreach (Enemy e in TestScreen._enemyList)
             {
-                return true;
+                if (e._transFlag == true)
+                {
+                    return true;
+                }
             }
             return false;
         }

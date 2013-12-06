@@ -159,6 +159,9 @@
     <None Include="Content\Audio\MarkovSamples\hatsample.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Audio\MarkovSamples\sickershitsample.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="src\Managers\OldAudioManager.txt" />
     <None Include="Content\blank.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

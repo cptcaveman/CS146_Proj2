@@ -23,7 +23,7 @@ namespace MarkovChains.src.Enemies
         SpriteEffects dir = SpriteEffects.None;
 
         public static Vector2 _playerPos;
-        public static Boolean _transFlag;
+        public Boolean _transFlag;
 
         enum State
         {

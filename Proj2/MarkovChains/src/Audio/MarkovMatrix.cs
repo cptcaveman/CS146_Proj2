@@ -120,7 +120,8 @@ namespace MarkovChains.Audio
 
         public float getProbValue(string chain, char note)
         {
-            int n = _keys.IndexOf(chain);
+            
+            int n = _keys.IndexOf(_keys.Contains(chain) ? chain : _keys[0]);
             int m = _values.IndexOf(note);
             return _matrix[n][m];
         }
