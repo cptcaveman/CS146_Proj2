@@ -42,6 +42,6 @@ namespace MarkovChains.FSM
          * @param a string that contains the currentNote and
          *          a Random variable.
          */
-        char update(string currentNote);
+        string update(string currentNote);
     }
 }

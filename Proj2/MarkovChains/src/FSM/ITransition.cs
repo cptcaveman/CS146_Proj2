@@ -50,6 +50,6 @@ namespace MarkovChains.FSM
          * Determines if this transition is triggered.
          * @return True if triggered, false if not.
          */
-        Boolean isTriggered(Game1 game);
+        Boolean isTriggered();
     }
 }

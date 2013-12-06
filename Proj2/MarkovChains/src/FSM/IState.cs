@@ -28,21 +28,21 @@ namespace MarkovChains.FSM
          * @return a char variable that represents the
          *          next note to play.
          */
-        char findNextNote(string currentChain);
+        string findNextNote(string currentChain);
 
         /**
          * Member function that returns the list of transitions
          * that go from this state to another state.
          * @return a list of transitions.
          */
-        LinkedList<ITransition> getTransitions();
+        ITransition getTransitions();
 
         /**
          * Member function that sets the list of transitions
          * for this state.
          * @param a list of transitions.
          */
-        void setTransitions(LinkedList<ITransition> transitions);
+        void setTransitions(ITransition transitions);
 
         /**
          * Member function that sets the name of the current

@@ -23,6 +23,7 @@ namespace MarkovChains.src.Enemies
         SpriteEffects dir = SpriteEffects.None;
 
         public static Vector2 _playerPos;
+        public static Boolean _transFlag;
 
         enum State
         {
@@ -63,13 +64,15 @@ namespace MarkovChains.src.Enemies
 
                 _texture = texture_chase;
 
+                _transFlag = true;
+
                 timer = 0;
             }
             else
             {
                 _texture = texture_idle;
                 timer += gameTime.ElapsedGameTime.Milliseconds / 1000.0f;
-
+                _transFlag = false;
                 if (timer > swapDirAt)
                 {
                     double test = rand.NextDouble();
@@ -90,6 +93,7 @@ namespace MarkovChains.src.Enemies
                     }
 
                     test = rand.NextDouble();
+
 
                     if (test < .3)
                         dirY = -1;

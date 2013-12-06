@@ -13,6 +13,7 @@ using System.IO;
 using System.Threading;
 using Tao.Sdl;
 using MarkovChains.FSM;
+using MarkovChains.src.Conditions;
 
 namespace MarkovChains.Managers
 {
@@ -137,6 +138,17 @@ namespace MarkovChains.Managers
             currentChain = SM.getCurrentState().getInitialNote();
             PlaySound("A");
             PlaySound("A");
+            State combat = new State();
+            Transition eToC = new Transition();
+            Transition cToE = new Transition();
+
+            eToC.setCondition(new EnemyNearby());
+            eToC.setTargetState(combat);
+            exploration.setTransitions(eToC);
+
+            cToE.setCondition(new NotEnemyNearby());
+            cToE.setTargetState(exploration);
+            combat.setTransitions(cToE);
         }
 
 
@@ -161,10 +173,10 @@ namespace MarkovChains.Managers
 
             if (_soundsToPlay.Count < 10)
             {
-                char currentNote = SM.update(currentChain);
+                string currentNote = SM.update(currentChain);
                 currentChain += currentNote;
                 currentChain = currentChain.Substring(1);
-                PlaySound(currentNote.ToString().ToUpper());
+                PlaySound(currentNote.ToUpper());
             }
         }
 

@@ -44,7 +44,9 @@
     <Compile Include="src\Audio\Sound3D.cs" />
     <Compile Include="src\Audio\WaveData.cs" />
     <Compile Include="src\Camera\Camera2D.cs" />
+    <Compile Include="src\Conditions\EnemyNearby.cs" />
     <Compile Include="src\Conditions\ICondition.cs" />
+    <Compile Include="src\Conditions\NotEnemyNearby.cs" />
     <Compile Include="src\Debug\Debug.cs" />
     <Compile Include="src\Enemies\Enemy.cs" />
     <Compile Include="src\Environment\Level.cs" />
@@ -152,6 +154,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Audio\G.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Audio\MarkovSamples\hatsample.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="src\Managers\OldAudioManager.txt" />

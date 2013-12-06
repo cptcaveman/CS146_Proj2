@@ -12,9 +12,11 @@ namespace MarkovChains.FSM
 {
     class State : IState
     {
+        public string prefix = "";
         //private class variables
         private MarkovMatrix<string, char> _markovMatrix; //the Markov Matrix
-        private LinkedList<ITransition> _stateTrans; //the transitions for this state
+        private MarkovMatrix<string, char> _hatMatrix;
+        private ITransition _stateTrans; //the transitions for this state
         private Random _rand; //random variable used for Markov chaining
         private string _stateName; //name for the current state
         private string _initNote;  //the initial note to be played when new state becomes active
@@ -25,10 +27,11 @@ namespace MarkovChains.FSM
             _rand = new Random(1337);
             //run sickshitsample.txt with timestep = to .15f and 2nd or 3rd or 6th order markov
             _markovMatrix = AudioManager.Instance.SampleAudioTab("Content\\Audio\\MarkovSamples\\sickshitsample.txt", 2);
+            _hatMatrix = AudioManager.Instance.SampleAudioTab("Content\\Audio\\MarkovSamples\\hatsample.txt", 2);
         }
 
         //This is our action to perform
-        public char findNextNote(string currentChain)
+        public string findNextNote(string currentChain)
         {
             int currentState = 0;       //index of currentChain
             float targetSum = 0;        //random sum based on totalProbability
@@ -62,16 +65,16 @@ namespace MarkovChains.FSM
 
             nextNote = nextNote >= _markovMatrix.getValues().Count ? _markovMatrix.getValues().Count - 1 : nextNote;
 
-            char noteToPlay = _markovMatrix.getValues().ElementAt(nextNote);
+            string noteToPlay = prefix + _markovMatrix.getValues().ElementAt(nextNote);
             return noteToPlay;
         }
 
-        public LinkedList<ITransition> getTransitions()
+        public ITransition getTransitions()
         {
             return _stateTrans;
         }
 
-        public void setTransitions(LinkedList<ITransition> transitions)
+        public void setTransitions(ITransition transitions)
         {
             _stateTrans = transitions;
         }

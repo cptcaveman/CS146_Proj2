@@ -24,8 +24,15 @@ namespace MarkovChains.FSM
             return _currentState;
         }
 
-        public char update(string currentNote)
+        public string update(string currentNote)
         {
+            Transition trans = (Transition)_currentState.getTransitions();
+            if(trans.isTriggered()){
+                {
+                    setCurrentState(trans.getTargetState());
+                }
+            }
+            Console.WriteLine("current state: " + _currentState.getStateName());
             return _currentState.findNextNote(currentNote);
         }
     }

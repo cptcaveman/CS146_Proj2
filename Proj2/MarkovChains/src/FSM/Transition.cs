@@ -36,8 +36,8 @@ namespace MarkovChains.FSM
 		    myAction = action;
 	    }
 
-	    public Boolean isTriggered(Game1 game) {
-		    return myCondition.test(game);
+	    public Boolean isTriggered() {
+		    return myCondition.test();
 	    }
     }
 }
