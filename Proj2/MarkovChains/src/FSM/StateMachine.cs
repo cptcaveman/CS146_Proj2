@@ -28,7 +28,7 @@ namespace MarkovChains.FSM
         {
             string chain = currentNote;
             Transition trans = (Transition)_currentState.getTransitions();
-            if(trans.isTriggered()){
+            if(trans != null && trans.isTriggered()){
                 {
                     setCurrentState(trans.getTargetState());
                     chain = _currentState.getInitialNote();

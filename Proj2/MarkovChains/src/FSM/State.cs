@@ -38,7 +38,12 @@ namespace MarkovChains.FSM
                 _stateName = "combat";
                 _initNote = "DA";
             }
-            _hatMatrix = AudioManager.Instance.SampleAudioTab("Content\\Audio\\MarkovSamples\\hatsample.txt", 2);
+            else if (stateName == "drum")
+            {
+                _markovMatrix = AudioManager.Instance.SampleAudioTab("Content\\Audio\\MarkovSamples\\hatsample.txt", 2);
+                _stateName = "drum";
+                _initNote = "AA";
+            }
         }
 
         //This is our action to perform

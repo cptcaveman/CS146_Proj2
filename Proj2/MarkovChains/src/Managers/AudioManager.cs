@@ -47,6 +47,7 @@ namespace MarkovChains.Managers
 
         private Dictionary<string, SoundEffect> _sounds;
         private Queue<string> _soundsToPlay;
+        private Queue<string> hatSounds;
 
         public AudioManager()
         {
@@ -57,7 +58,7 @@ namespace MarkovChains.Managers
         {
             _sounds = new Dictionary<string, SoundEffect>();
             _soundsToPlay = new Queue<string>();
-
+            hatSounds = new Queue<string>();
             //LoadOpenAL();
         }
 
@@ -106,7 +107,9 @@ namespace MarkovChains.Managers
         }
 
         StateMachine SM;
+        StateMachine hatSM;
         public string currentChain;
+        public string currentHatChain;
 
         public void LoadContent()
         {
@@ -123,6 +126,16 @@ namespace MarkovChains.Managers
             _sounds.Add("G", Game1.Instance.Content.Load<SoundEffect>(@"Audio\G"));
             _sounds.Add("G#", Game1.Instance.Content.Load<SoundEffect>(@"Audio\G#"));
 
+            //_sounds.Add("hatA", Game1.Instance.Content.Load<SoundEffect>(@"Audio\hatA"));
+            //_sounds.Add("hatB", Game1.Instance.Content.Load<SoundEffect>(@"Audio\hatB"));
+            //_sounds.Add("hatC", Game1.Instance.Content.Load<SoundEffect>(@"Audio\hatC"));
+
+            _sounds.Add("drumA", Game1.Instance.Content.Load<SoundEffect>(@"Audio\drumA"));
+            _sounds.Add("drumB", Game1.Instance.Content.Load<SoundEffect>(@"Audio\drumB"));
+            _sounds.Add("drumC", Game1.Instance.Content.Load<SoundEffect>(@"Audio\drumC"));
+            _sounds.Add("drumD", Game1.Instance.Content.Load<SoundEffect>(@"Audio\drumD"));
+            _sounds.Add("drumE", Game1.Instance.Content.Load<SoundEffect>(@"Audio\drumE"));
+            
             //_sounds.Add("hat8", Game1.Instance.Content.Load<SoundEffect>(@"Audio\hat8"));
             //_sounds.Add("kick14", Game1.Instance.Content.Load<SoundEffect>(@"Audio\kick14"));
             //_sounds.Add("openhat8", Game1.Instance.Content.Load<SoundEffect>(@"Audio\openhat8"));
@@ -149,6 +162,14 @@ namespace MarkovChains.Managers
             cToE.setCondition(new NotEnemyNearby());
             cToE.setTargetState(exploration);
             combat.setTransitions(cToE);
+
+            hatSM = new StateMachine();
+            State _state = new State("drum");
+            hatSM.setCurrentState(_state);
+            _state.prefix = "drum";
+            hatSounds.Enqueue("A");
+            hatSounds.Enqueue("A");
+            currentHatChain = hatSM.getCurrentState().getInitialNote();
         }
 
 
@@ -160,9 +181,12 @@ namespace MarkovChains.Managers
         }
         int count = 0;
         float time = 0.0f;
+        float hatTime = 0.0f;
+
         public void Update(GameTime gameTime)
         {
             time += gameTime.ElapsedGameTime.Milliseconds / 1000f;
+            hatTime += gameTime.ElapsedGameTime.Milliseconds / 1000f;
 
             if(time > .15f)
             //while (_soundsToPlay.Count > 0)
@@ -171,12 +195,32 @@ namespace MarkovChains.Managers
                 (_sounds[_soundsToPlay.Dequeue()].CreateInstance()).Play();
             }
 
+            if (hatTime > .14f)
+            {
+                hatTime = 0.0f;
+                if (hatSounds.Count > 0)
+                {
+                    SoundEffectInstance inst = (_sounds[hatSounds.Dequeue()].CreateInstance());
+                    inst.Volume *= .5f;
+                    inst.Play();
+                }
+            }
+
             if (_soundsToPlay.Count < 10)
             {
                 string currentNote = SM.update(currentChain);
                 currentChain += currentNote;
                 currentChain = currentChain.Substring(1);
                 PlaySound(currentNote.ToUpper());
+            }
+
+            if (hatSounds.Count < 10)
+            {
+                string currentNote = hatSM.update(currentHatChain);
+                currentHatChain += currentNote;
+                currentHatChain = currentHatChain.Substring(1);
+                //if (_sounds.ContainsKey(currentNote))
+                //    hatSounds.Enqueue(currentNote);
             }
         }
 
